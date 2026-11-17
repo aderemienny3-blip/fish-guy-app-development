@@ -23,6 +23,7 @@ export default async function SoundsPage({ searchParams }: SoundsPageProps) {
           <p>Fish Guy Sounds puts independent hip-hop up front. Discover new voices, stream what&apos;s free, and buy direct from the artists.</p>
           <div className="hero-actions">
             <a href="#new-releases" className="button button-gold">Explore the releases <span aria-hidden="true">↓</span></a>
+            <Link href="/shop" className="button button-outline">Shop frozen food</Link>
             <Link href="/library" className="button button-outline">Open my library</Link>
           </div>
         </div>

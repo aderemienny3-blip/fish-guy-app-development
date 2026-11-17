@@ -1,19 +1,24 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Disc3 } from 'lucide-react'
+import { CartDrawer } from '@/components/shop/cart-drawer'
 
 export function SiteHeader() {
   return (
     <header className="site-header">
-      <Link href="/sounds" className="brand-lockup" aria-label="Fish Guy Sounds home">
-        <span className="brand-mark" aria-hidden="true">FG</span>
-        <span className="brand-wordmark"><strong>FISH GUY</strong><span>SOUNDS</span></span>
+      <Link href="/" className="brand-lockup" aria-label="Fish Guy home">
+        <span className="brand-wordmark"><strong>FISH GUY</strong></span>
       </Link>
       <nav className="main-nav" aria-label="Main navigation">
-        <Link href="/sounds" className="nav-link">Discover</Link>
-        <Link href="/library" className="nav-link">My Library</Link>
-        <Link href="/sounds/apply" className="nav-apply">Artist application <span aria-hidden="true">↗</span></Link>
+        <Link href="/" className="nav-link">Shop</Link>
+        <Link href="/shop?category=fish" className="nav-link">Frozen Fish</Link>
+        <Link href="/orders" className="nav-link">Orders</Link>
+        <Link href="/sounds" className="nav-link">Sounds</Link>
       </nav>
+      <div className="header-utilities">
+        <span className="store-status"><span className="store-status-dot" aria-hidden="true" />Open 8:30 AM – 9:00 PM</span>
+        <CartDrawer />
+      </div>
     </header>
   )
 }
@@ -21,9 +26,14 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <Link href="/sounds" className="footer-brand">FISH GUY SOUNDS</Link>
-      <p>Independent Lagos hip-hop. Direct from the artists.</p>
-      <Link href="/sounds/apply">Artists: apply to upload</Link>
+      <Link href="/" className="footer-brand">FISH GUY</Link>
+      <p>Frozen food for Lagos. Independent sounds for the kitchen.</p>
+      <nav className="footer-links" aria-label="Footer navigation">
+        <Link href="/shop">Shop</Link>
+        <Link href="/sounds">Sounds</Link>
+        <Link href="/library">My library</Link>
+        <Link href="/sounds/apply">Artist application</Link>
+      </nav>
     </footer>
   )
 }
