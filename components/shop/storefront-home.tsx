@@ -2,7 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Beef, Clock3, CookingPot, Drumstick, Fish, MapPin, Shell, Soup } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import type { MusicTrack } from '@/lib/music-data'
+import type { DeliveryArea, FeaturedPromotion, MusicTrack } from '@/lib/music-data'
+import { DeliveryAreaChecker } from '@/components/shop/delivery-area-checker'
+import { FeaturedPromotionStrip } from '@/components/music/featured-promotion-strip'
 import { FreeStreamStrip } from '@/components/shop/free-stream-strip'
 import { ShopEmptyState } from '@/components/shop/shop-empty-state'
 
@@ -21,7 +23,15 @@ const deliverySteps = [
   { title: 'Pay with Monnify', detail: 'Complete checkout securely in naira.', icon: CookingPot },
 ]
 
-export function StorefrontHome({ freeTracks }: { freeTracks: MusicTrack[] }) {
+export function StorefrontHome({
+  freeTracks,
+  deliveryAreas,
+  featuredPromotions,
+}: {
+  freeTracks: MusicTrack[]
+  deliveryAreas: DeliveryArea[]
+  featuredPromotions: FeaturedPromotion[]
+}) {
   return (
     <main className="page-width shop-home">
       <section className="shop-hero" aria-labelledby="shop-title">
@@ -37,6 +47,9 @@ export function StorefrontHome({ freeTracks }: { freeTracks: MusicTrack[] }) {
           <span className="hero-art-caption">FROZEN WITH CARE · LAGOS</span>
         </div>
       </section>
+
+      <FeaturedPromotionStrip campaigns={featuredPromotions} title="Featured on Fish Guy" />
+      <DeliveryAreaChecker areas={deliveryAreas} />
 
       <section className="shop-section category-section" id="categories" aria-labelledby="categories-title">
         <div className="shop-section-heading">

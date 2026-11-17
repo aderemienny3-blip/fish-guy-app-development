@@ -1,6 +1,6 @@
-import { and, count, desc, eq, gte } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gte, lte } from 'drizzle-orm'
 import { db } from '@/lib/db'
-import { musicArtists, musicOrderItems, musicOrders, musicPlays, musicTracks } from '@/lib/db/schema'
+import { advertisingBookings, deliveryAreas, musicArtists, musicOrderItems, musicOrders, musicPlays, musicTracks } from '@/lib/db/schema'
 
 export type MusicTrack = {
   id: string
@@ -27,6 +27,25 @@ export type MusicArtist = {
   imageUrl: string | null
   bannerUrl: string | null
   isFeatured: boolean
+}
+
+export type DeliveryArea = {
+  id: string
+  name: string
+  slug: string
+  deliveryFeeKobo: number
+  freeDeliveryThresholdKobo: number | null
+}
+
+export type PromotionPlacement = 'home_featured' | 'sounds_featured'
+
+export type FeaturedPromotion = {
+  id: string
+  artistName: string
+  campaignTitle: string
+  placement: PromotionPlacement
+  startsOn: string
+  endsOn: string
 }
 
 const trackSelection = {
@@ -157,4 +176,41 @@ export async function getLibraryItems(sessionHash: string) {
     .innerJoin(musicArtists, eq(musicTracks.artistId, musicArtists.id))
     .where(and(eq(musicOrders.buyerSessionHash, sessionHash), eq(musicOrders.status, 'paid')))
     .orderBy(desc(musicOrders.paidAt))
+}
+
+export async function getDeliveryAreas() {
+  return db
+    .select({
+      id: deliveryAreas.id,
+      name: deliveryAreas.name,
+      slug: deliveryAreas.slug,
+      deliveryFeeKobo: deliveryAreas.deliveryFeeKobo,
+      freeDeliveryThresholdKobo: deliveryAreas.freeDeliveryThresholdKobo,
+    })
+    .from(deliveryAreas)
+    .where(eq(deliveryAreas.isActive, true))
+    .orderBy(asc(deliveryAreas.name))
+}
+
+export async function getActivePromotionCampaigns(placement: PromotionPlacement) {
+  const today = new Date().toISOString().slice(0, 10)
+
+  return db
+    .select({
+      id: advertisingBookings.id,
+      artistName: advertisingBookings.artistName,
+      campaignTitle: advertisingBookings.campaignTitle,
+      placement: advertisingBookings.placement,
+      startsOn: advertisingBookings.startsOn,
+      endsOn: advertisingBookings.endsOn,
+    })
+    .from(advertisingBookings)
+    .where(and(
+      eq(advertisingBookings.status, 'active'),
+      eq(advertisingBookings.placement, placement),
+      lte(advertisingBookings.startsOn, today),
+      gte(advertisingBookings.endsOn, today),
+    ))
+    .orderBy(desc(advertisingBookings.createdAt))
+    .limit(4)
 }
