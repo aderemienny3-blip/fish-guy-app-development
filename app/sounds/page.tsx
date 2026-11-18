@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { ArtistSpotlight } from '@/components/music/artist-spotlight'
+import { FeaturedPromotionStrip } from '@/components/music/featured-promotion-strip'
 import { GenreChips } from '@/components/music/genre-chips'
 import { NoTracksEmptyState } from '@/components/music/empty-state'
 import { TrackCard } from '@/components/music/track-card'
-import { getSoundsPageData } from '@/lib/music-data'
+import { getActivePromotionCampaigns, getSoundsPageData } from '@/lib/music-data'
 
 const genres = ['Afrobeats-hip-hop', 'Street rap', 'Drill', 'Trap', 'Boom bap']
 
@@ -12,7 +13,10 @@ type SoundsPageProps = { searchParams: Promise<{ genre?: string }> }
 export default async function SoundsPage({ searchParams }: SoundsPageProps) {
   const { genre } = await searchParams
   const selectedGenre = genres.find((item) => item.toLowerCase() === genre?.toLowerCase())
-  const data = await getSoundsPageData(selectedGenre)
+  const [data, featuredPromotions] = await Promise.all([
+    getSoundsPageData(selectedGenre),
+    getActivePromotionCampaigns('sounds_featured'),
+  ])
 
   return (
     <main className="page-width sounds-main">
@@ -23,7 +27,9 @@ export default async function SoundsPage({ searchParams }: SoundsPageProps) {
           <p>Fish Guy Sounds puts independent hip-hop up front. Discover new voices, stream what&apos;s free, and buy direct from the artists.</p>
           <div className="hero-actions">
             <a href="#new-releases" className="button button-gold">Explore the releases <span aria-hidden="true">↓</span></a>
+            <Link href="/shop" className="button button-outline">Shop frozen food</Link>
             <Link href="/library" className="button button-outline">Open my library</Link>
+            <Link href="/sounds/promote" className="button button-outline">Book an artist feature</Link>
           </div>
         </div>
         <div className="hero-card" aria-label="Fish Guy Sounds, independent Lagos hip-hop">
@@ -34,6 +40,7 @@ export default async function SoundsPage({ searchParams }: SoundsPageProps) {
       </section>
 
       <ArtistSpotlight artist={data.featuredArtist} />
+      <FeaturedPromotionStrip campaigns={featuredPromotions} title="Featured on Fish Guy Sounds" />
 
       <section className="genre-area" aria-label="Browse genres">
         <p>Find your frequency</p>

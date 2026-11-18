@@ -204,31 +204,26 @@ export function useMusicPlayer() {
 
 export function MiniPlayer() {
   const { currentTrack, isPlaying, currentTime, duration, volume, isMuted, togglePlayback, playNext, toggleMute, setVolume, seek } = useMusicPlayer()
-  const canSkip = Boolean(currentTrack)
   const maxDuration = duration || currentTrack?.durationSeconds || 0
+
+  if (!currentTrack) return null
 
   return (
     <aside className="mini-player" aria-label="Music player">
       <div className="player-track">
-        {currentTrack ? (
-          <>
-            <CoverArtwork src={currentTrack.coverImageUrl} alt={`${currentTrack.title} cover art`} className="player-cover" />
-            <div className="player-track-copy"><strong>{currentTrack.title}</strong><span>{currentTrack.artistName}</span></div>
-          </>
-        ) : <div className="player-empty">Choose a track to start listening</div>}
+        <CoverArtwork src={currentTrack.coverImageUrl} alt={`${currentTrack.title} cover art`} className="player-cover" />
+        <div className="player-track-copy"><strong>{currentTrack.title}</strong><span>{currentTrack.artistName}</span></div>
       </div>
-      <div className="player-center">
-        <div className="player-controls">
-          <button className="player-icon-button player-play-button" type="button" aria-label={isPlaying ? 'Pause music' : 'Play music'} disabled={!currentTrack} onClick={togglePlayback}>
-            {isPlaying ? <Pause fill="currentColor" aria-hidden="true" /> : <Play fill="currentColor" aria-hidden="true" />}
-          </button>
-          <button className="player-icon-button" type="button" aria-label="Play next track" disabled={!canSkip} onClick={playNext}><SkipForward aria-hidden="true" /></button>
-        </div>
-        <div className="player-progress">
-          <span>{formatDuration(Math.floor(currentTime))}</span>
-          <input aria-label="Track position" type="range" min="0" max={maxDuration || 1} step="1" value={Math.min(currentTime, maxDuration || 0)} disabled={!currentTrack || !duration} onChange={(event) => seek(Number(event.target.value))} />
-          <span>{formatDuration(Math.floor(maxDuration))}</span>
-        </div>
+      <div className="player-controls">
+        <button className="player-icon-button player-play-button" type="button" aria-label={isPlaying ? 'Pause music' : 'Play music'} onClick={togglePlayback}>
+          {isPlaying ? <Pause fill="currentColor" aria-hidden="true" /> : <Play fill="currentColor" aria-hidden="true" />}
+        </button>
+        <button className="player-icon-button" type="button" aria-label="Play next track" onClick={playNext}><SkipForward aria-hidden="true" /></button>
+      </div>
+      <div className="player-progress">
+        <span>{formatDuration(Math.floor(currentTime))}</span>
+        <input aria-label="Track position" type="range" min="0" max={maxDuration || 1} step="1" value={Math.min(currentTime, maxDuration || 0)} disabled={!duration} onChange={(event) => seek(Number(event.target.value))} />
+        <span>{formatDuration(Math.floor(maxDuration))}</span>
       </div>
       <div className="player-volume">
         <button className="player-icon-button" type="button" aria-label={isMuted ? 'Unmute music' : 'Mute music'} onClick={toggleMute}>
